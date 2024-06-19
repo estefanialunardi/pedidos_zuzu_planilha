@@ -29,8 +29,10 @@ def connect_db():
 
 def initialize_data(conn):
     '''Initializes the inventory table with some data.'''
+    st.success("Initializing the inventory table with some data")
     cursor = conn.cursor()
 
+    st.success("Creating table")
     cursor.execute(
         '''
         CREATE TABLE IF NOT EXISTS order_inventory (
@@ -44,9 +46,10 @@ def initialize_data(conn):
         '''
     )
 
+    st.success("Inserting data into table")
     cursor.execute(
         '''
-        INSERT INTO inventory
+        INSERT INTO order_inventory
             (item_name, price, units_sold, units_left, cost_price, item_campaing)
         VALUES
             -- Festa Junina
@@ -70,7 +73,6 @@ def initialize_data(conn):
             ('Empadão de Carne Seca', 30, 0, 0, 0, 'Festa Junina'),
             ('Bolo de mexerica', 20, 0, 0, 0, 'Festa Junina'),
             ('Bolo de aipim com coco', 20, 0, 0, 0, 'Festa Junina'),
-            
             -- Fornada
             ('Muffin de mirtilo', 12, 0, 0, 0, 'Fornada'),
             ('Sourdough branco', 30, 0, 0, 0, 'Fornada'),
@@ -82,6 +84,7 @@ def initialize_data(conn):
         '''
     )
     conn.commit()
+    st.success("Table loaded")
 
 
 def load_data(conn):
@@ -91,8 +94,9 @@ def load_data(conn):
     try:
         cursor.execute('SELECT * FROM order_inventory')
         data = cursor.fetchall()
+        st.success("Inventory in DB!")
     except:
-        return None
+        return st.write("Error in DB!")
 
     df = pd.DataFrame(data,
         columns=[
