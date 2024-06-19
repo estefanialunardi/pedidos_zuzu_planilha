@@ -104,6 +104,7 @@ def load_data(conn):
             'units_sold',
             'units_left',
             'cost_price',
+            'item_campaing'
         ])
 
     return df
