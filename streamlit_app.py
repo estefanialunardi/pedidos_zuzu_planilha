@@ -271,3 +271,5 @@ st.subheader('Best sellers', divider='orange')
 #         y=alt.Y('item_name').sort('-x'),
 #     ),
 #     use_container_width=True)
+
+st.write(df)
