@@ -129,8 +129,6 @@ def update_data(conn, df, changes):
                 units_sold = :units_sold,
                 units_left = :units_left,
                 cost_price = :cost_price,
-                reorder_point = :reorder_point,
-                description = :description
             WHERE id = :id
             ''',
             rows,
@@ -140,9 +138,9 @@ def update_data(conn, df, changes):
         cursor.executemany(
             '''
             INSERT INTO inventory
-                (id, item_name, price, units_sold, units_left, cost_price, reorder_point, description)
+                (id, item_name, price, units_sold, units_left, cost_price)
             VALUES
-                (:id, :item_name, :price, :units_sold, :units_left, :cost_price, :reorder_point, :description)
+                (:id, :item_name, :price, :units_sold, :units_left, :cost_price)
             ''',
             (defaultdict(lambda: None, row) for row in changes['added_rows']),
         )
@@ -161,15 +159,12 @@ def update_data(conn, df, changes):
 
 # Set the title that appears at the top of the page.
 '''
-# :shopping_bags: Inventory tracker
+# :shopping_bags: Pedidos Zuzunely
 
-**Welcome to Alice's Corner Store's intentory tracker!**
-This page reads and writes directly from/to our inventory database.
-'''
+**Inventário e controle de pedidos**'''
 
 st.info('''
-    Use the table below to add, remove, and edit items.
-    And don't forget to commit your changes when you're done.
+    Tabela de controle do estoque, para adicionar, remover ou editar os itens.
     ''')
 
 # Connect to database and create table if needed
@@ -210,53 +205,53 @@ st.button(
 # Now some cool charts
 
 # Add some space
-''
-''
-''
+#''
+#''
+# #''
 
-st.subheader('Units left', divider='red')
+# st.subheader('Units left', divider='red')
 
-need_to_reorder = df[df['units_left'] < df['reorder_point']].loc[:, 'item_name']
+# need_to_reorder = df[df['units_left'] < df['reorder_point']].loc[:, 'item_name']
 
-if len(need_to_reorder) > 0:
-    items = '\n'.join(f'* {name}' for name in need_to_reorder)
+# if len(need_to_reorder) > 0:
+#     items = '\n'.join(f'* {name}' for name in need_to_reorder)
 
-    st.error(f"We're running dangerously low on the items below:\n {items}")
+#     st.error(f"We're running dangerously low on the items below:\n {items}")
 
-''
-''
+# ''
+# ''
 
-st.altair_chart(
-    # Layer 1: Bar chart.
-    alt.Chart(df)
-        .mark_bar(
-            orient='horizontal',
-        )
-        .encode(
-            x='units_left',
-            y='item_name',
-        )
-    # Layer 2: Chart showing the reorder point.
-    + alt.Chart(df)
-        .mark_point(
-            shape='diamond',
-            filled=True,
-            size=50,
-            color='salmon',
-            opacity=1,
-        )
-        .encode(
-            x='reorder_point',
-            y='item_name',
-        )
-    ,
-    use_container_width=True)
+# st.altair_chart(
+#     # Layer 1: Bar chart.
+#     alt.Chart(df)
+#         .mark_bar(
+#             orient='horizontal',
+#         )
+#         .encode(
+#             x='units_left',
+#             y='item_name',
+#         )
+#     # Layer 2: Chart showing the reorder point.
+#     + alt.Chart(df)
+#         .mark_point(
+#             shape='diamond',
+#             filled=True,
+#             size=50,
+#             color='salmon',
+#             opacity=1,
+#         )
+#         .encode(
+#             x='reorder_point',
+#             y='item_name',
+#         )
+#     ,
+#     use_container_width=True)
 
-st.caption('NOTE: The :diamonds: location shows the reorder point.')
+# st.caption('NOTE: The :diamonds: location shows the reorder point.')
 
-''
-''
-''
+# ''
+# ''
+# ''
 
 # -----------------------------------------------------------------------------
 
