@@ -52,8 +52,7 @@ def initialize_data(conn):
         INSERT INTO order_inventory
             (item_name, price, units_sold, units_left, cost_price, item_campaing)
         VALUES
-            -- Festa Junina
-            ('Muffin de milho', 8, 0, 0, 0, 'Festa Junina'),
+            (('Muffin de milho', 8, 0, 0, 0, 'Festa Junina'),
             ('Pão de Torresmo', 38, 0, 0, 0, 'Festa Junina'),
             ('Cinnamon Roll', 8, 0, 0, 0, 'Festa Junina'),
             ('Cachorro-Quente assado', 8, 0, 0, 0, 'Festa Junina'),
@@ -73,14 +72,13 @@ def initialize_data(conn):
             ('Empadão de Carne Seca', 30, 0, 0, 0, 'Festa Junina'),
             ('Bolo de mexerica', 20, 0, 0, 0, 'Festa Junina'),
             ('Bolo de aipim com coco', 20, 0, 0, 0, 'Festa Junina'),
-            -- Fornada
             ('Muffin de mirtilo', 12, 0, 0, 0, 'Fornada'),
             ('Sourdough branco', 30, 0, 0, 0, 'Fornada'),
             ('Sourdough centeio e castanha', 38, 0, 0, 0, 'Fornada'),
             ('Sourdough de Matcha com uva assada', 38, 0, 0, 0, 'Fornada'),
             ('Bagel de flor de sal', 8, 0, 0, 0, 'Fornada'),
             ('Bagel de Papoula', 10, 0, 0, 0, 'Fornada'),
-            ('Bagel de Cebola', 10, 0, 0, 0, 'Fornada'),
+            ('Bagel de Cebola', 10, 0, 0, 0, 'Fornada'))
         '''
     )
     conn.commit()
