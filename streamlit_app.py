@@ -41,7 +41,8 @@ def initialize_data(conn):
             price REAL,
             units_sold INTEGER,
             units_left INTEGER,
-            cost_price REAL)
+            cost_price REAL,
+            item_campaing TEXT)
         '''
     )
 
