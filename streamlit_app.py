@@ -15,10 +15,10 @@ st.set_page_config(
 # -----------------------------------------------------------------------------
 # Declare some useful functions.
 
-def connect_db():
+def connect_db(db_name):
     '''Connects to the sqlite database.'''
 
-    DB_FILENAME = Path(__file__).parent/'order_inventory.db'
+    DB_FILENAME = Path(__file__).parent/f'{db_name}.db'
     db_already_exists = DB_FILENAME.exists()
 
     conn = sqlite3.connect(DB_FILENAME)
@@ -171,7 +171,7 @@ st.info('''
     ''')
 
 # Connect to database and create table if needed
-conn, db_was_just_created = connect_db()
+conn, db_was_just_created = connect_db('order_inventory')
 
 # Initialize data.
 if db_was_just_created:
@@ -188,8 +188,8 @@ edited_df = st.data_editor(
     num_rows='dynamic', # Allow appending/deleting rows.
     column_config={
         # Show dollar sign before price columns.
-        "price": st.column_config.NumberColumn(format="$%.2f"),
-        "cost_price": st.column_config.NumberColumn(format="$%.2f"),
+        "price": st.column_config.NumberColumn(format="R$%.2f"),
+        "cost_price": st.column_config.NumberColumn(format="R$%.2f"),
     },
     key='inventory_table')
 
