@@ -7,18 +7,15 @@ import altair as alt
 import pandas as pd
 
 st.set_page_config(
-    page_title='Pedidos Zuzu',
-    page_icon=':shopping_bags:', 
+    page_title='Acompanhamento de pedidos Zuzu',
+    page_icon=':shopping_bags:',
 )
 
-
-# -----------------------------------------------------------------------------
-# Declare some useful functions.
 
 def connect_db():
     '''Connects to the sqlite database.'''
 
-    DB_FILENAME = Path(__file__).parent/'order_inventory.db'
+    DB_FILENAME = Path(__file__).parent/'inventory.db'
     db_already_exists = DB_FILENAME.exists()
 
     conn = sqlite3.connect(DB_FILENAME)
@@ -28,83 +25,59 @@ def connect_db():
 
 
 def initialize_data(conn):
-    '''Initializes the inventory table with some data.'''
-    cursor = conn.cursor()
-
-    cursor.execute(
-        '''
-        CREATE TABLE IF NOT EXISTS order_inventory (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            item_name TEXT,
-            price REAL,
-            units_sold INTEGER,
-            units_left INTEGER,
-            cost_price REAL,
-        )
-        '''
-    )
-
-    cursor.execute(
-        '''
-        INSERT INTO inventory
-            (item_name, price, units_sold, units_left, cost_price, item_campaing)
-        VALUES
-            -- Festa Junina
-            ('Muffin de milho', 8, 0, 0, 0, 'Festa Junina'),
-            ('Pão de Torresmo', 38, 0, 0, 0, 'Festa Junina'),
-            ('Cinnamon Roll', 8, 0, 0, 0, 'Festa Junina'),
-            ('Cachorro-Quente assado', 8, 0, 0, 0, 'Festa Junina'),
-            ('Praliné de amendoim Pequeno', 5, 0, 0, 0, 'Festa Junina'),
-            ('Praliné de amendoim Grande', 10, 0, 0, 0, 'Festa Junina'),
-            ('Pipoca Doce Grande', 10, 0, 0, 0, 'Festa Junina'),
-            ('Pipoca Doce Pequena', 5, 0, 0, 0, 'Festa Junina'),
-            ('Canjica Doce 300mg', 15, 0, 0, 0, 'Festa Junina'),
-            ('Canjica Doce 500mg', 25, 0, 0, 0, 'Festa Junina'),
-            ('Canjica Doce 1000mg', 50, 0, 0, 0, 'Festa Junina'),
-            ('Caldo de Mandioca 300mg', 21, 0, 0, 0, 'Festa Junina'),
-            ('Caldo de Mandioca 500mg', 35, 0, 0, 0, 'Festa Junina'),
-            ('Caldo de Mandioca 1000mg', 70, 0, 0, 0, 'Festa Junina'),
-            ('Caldo de Feijão 300mg', 21, 0, 0, 0, 'Festa Junina'),
-            ('Caldo de Feijão 500mg', 35, 0, 0, 0, 'Festa Junina'),
-            ('Caldo de Feijão 1000mg', 70, 0, 0, 0, 'Festa Junina'),
-            ('Empadão de Carne Seca', 30, 0, 0, 0, 'Festa Junina'),
-            ('Bolo de mexerica', 20, 0, 0, 0, 'Festa Junina'),
-            ('Bolo de aipim com coco', 20, 0, 0, 0, 'Festa Junina'),
-            
-            -- Fornada
-            ('Muffin de mirtilo', 12, 0, 0, 0, 'Fornada'),
-            ('Sourdough branco', 30, 0, 0, 0, 'Fornada'),
-            ('Sourdough centeio e castanha', 38, 0, 0, 0, 'Fornada'),
-            ('Sourdough de Matcha com uva assada', 38, 0, 0, 0, 'Fornada'),
-            ('Bagel de flor de sal', 8, 0, 0, 0, 'Fornada'),
-            ('Bagel de Papoula', 10, 0, 0, 0, 'Fornada'),
-            ('Bagel de Cebola', 10, 0, 0, 0, 'Fornada'),
-        '''
-    )
-    conn.commit()
+    #connect_to_tunnel_and_mysqlserver  
+        db_server = st.secrets["db_server"]
+        user = st.secrets["user"]
+        db_port = st.secrets["db_port"]
+        password = st.secrets["password"]
+        ip = st.secrets["ip"]
+        db_name = st.secrets["db_name"]
+        ip_ssh = st.secrets["ip_ssh"]
+        ssh_username = st.secrets["ssh_username"]
+        ssh_password = st.secrets["ssh_password"]
+        try:
+            server = SSHTunnelForwarder((ip_ssh, 4242), ssh_username=ssh_username, ssh_password=ssh_password, remote_bind_address=(db_server, 3306))
+            server.start()
+            port = str(server.local_bind_port)
+            conn_addr = 'mysql://' + user + ':' + password + '@' + db_server + ':' + port + '/' + db_name
+            engine = create_engine(conn_addr)
+            connection = engine.connect()
+            trans = connection.begin()
+            st.success("Connected!")
+        except:
+            st.error("Erro de conexão")
 
 
-def load_data(conn):
-    '''Loads the order_inventory data from the database.'''
-    cursor = conn.cursor()
 
-    try:
-        cursor.execute('SELECT * FROM order_inventory')
-        data = cursor.fetchall()
-    except:
-        return None
+        try:
+            my_email= st.secrets["my_email"]
+            mail_password= st.secrets["mail_password"]
+            msg=MIMEText(f"""{name} , 
+            votre inscription à Attitude Corps et Danses a été reçue! En cas de problème concernant les informations ou les fichiers fournis, nous vous contacterons !
+            L’entrée de l’école se fera par le 11 Rue Gabriel Péri, 31000 Toulousee. Veuillez utiliser ces codes pour rentrer à l’immeuble.
+            Code: 1311
+            À très vite, """)
+            msg['From'] = my_email
+            msg['To'] = mail
+            msg['Subject']= f" {name}, votre inscription à Attitude Corps et Danses !"
+            mail_server = smtplib.SMTP_SSL('smtp.gmail.com' ,465)
+            mail_server.ehlo()
+            mail_server.login(my_email, mail_password)
+            mail_server.sendmail(msg["From"], msg["To"], msg.as_string())
+            st.success("Merci! Rendez-vous en classe !")
+            st.balloons()
+        except Exception as er:
+            st.write(er)
 
-    df = pd.DataFrame(data,
-        columns=[
-            'id',
-            'item_name',
-            'price',
-            'units_sold',
-            'units_left',
-            'cost_price',
-        ])
+        try:
+            from sqlalchemy import text
+            mySql_insert_query0 = f"""UPDATE elevesdf set name = '{name}', birthday='{birthday}', age='{age}', address='{address}', city='{city}', toulouse = '{toulouse}', cpode='{pcode}',lat='{lat}',long='{lon}', mail='{mail}', telephone = '{telephone}', legal_representative= '{legal_representative}' where `name` = '{name}'"""
+            connection.execute(text(mySql_insert_query0))
+            st.spinner(text="S'il vous plaît, attendez !")
+        except: 
+            st.error("Erro de conexão")
 
-    return df
+
 
 
 def update_data(conn, df, changes):
