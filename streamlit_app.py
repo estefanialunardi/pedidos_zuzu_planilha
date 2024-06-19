@@ -52,7 +52,7 @@ def initialize_data(conn):
         INSERT INTO order_inventory
             (item_name, price, units_sold, units_left, cost_price, item_campaing)
         VALUES
-            (('Muffin de milho', 8, 0, 0, 0, 'Festa Junina'),
+            ('Muffin de milho', 8, 0, 0, 0, 'Festa Junina'),
             ('Pão de Torresmo', 38, 0, 0, 0, 'Festa Junina'),
             ('Cinnamon Roll', 8, 0, 0, 0, 'Festa Junina'),
             ('Cachorro-Quente assado', 8, 0, 0, 0, 'Festa Junina'),
@@ -78,7 +78,7 @@ def initialize_data(conn):
             ('Sourdough de Matcha com uva assada', 38, 0, 0, 0, 'Fornada'),
             ('Bagel de flor de sal', 8, 0, 0, 0, 'Fornada'),
             ('Bagel de Papoula', 10, 0, 0, 0, 'Fornada'),
-            ('Bagel de Cebola', 10, 0, 0, 0, 'Fornada'))
+            ('Bagel de Cebola', 10, 0, 0, 0, 'Fornada')
         '''
     )
     conn.commit()
