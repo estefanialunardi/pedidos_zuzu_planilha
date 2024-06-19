@@ -35,14 +35,13 @@ def initialize_data(conn):
     st.success("Creating table")
     cursor.execute(
         '''
-        CREATE TABLE IF NOT EXISTS order_inventory (
+        CREATE TABLE IF NOT EXISTS order_inventory(
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             item_name TEXT,
             price REAL,
             units_sold INTEGER,
             units_left INTEGER,
-            cost_price REAL,
-        )
+            cost_price REAL)
         '''
     )
 
