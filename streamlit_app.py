@@ -15,10 +15,10 @@ st.set_page_config(
 # -----------------------------------------------------------------------------
 # Declare some useful functions.
 
-def connect_db(db_name):
+def connect_db():
     '''Connects to the sqlite database.'''
 
-    DB_FILENAME = Path(__file__).parent/f'{db_name}.db'
+    DB_FILENAME = Path(__file__).parent/'order_inventory.'
     db_already_exists = DB_FILENAME.exists()
 
     conn = sqlite3.connect(DB_FILENAME)
@@ -109,7 +109,6 @@ def load_data(conn):
 
     return df
 
-
 def update_data(conn, df, changes):
     '''Updates the inventory data in the database.'''
     cursor = conn.cursor()
@@ -171,7 +170,7 @@ st.info('''
     ''')
 
 # Connect to database and create table if needed
-conn, db_was_just_created = connect_db('order_inventory')
+conn, db_was_just_created = connect_db()
 
 # Initialize data.
 if db_was_just_created:
