@@ -142,11 +142,11 @@ customers_list, db_was_just_created_customer = connect_db_customers()
 
 # Initialize data.
 if db_was_just_created_customer:
-    initialize_data(conn_customer)
+    initialize_customer_data(conn_customer)
     st.toast('Database initialized with some sample data.')
 
 # Load data from database
-df_customer = load_data(conn_customer)
+df_customer = load_customer_data(conn_customer)
 
 has_uncommitted_changes = any(len(v) for v in st.session_state.customers_list.values())
 
@@ -159,8 +159,6 @@ st.button(
     args=(customers_list, df_customer, st.session_state.customers_list))
 
 st.write(df_customer)
-
-
 
 def connect_db():
     '''Connects to the sqlite database.'''
