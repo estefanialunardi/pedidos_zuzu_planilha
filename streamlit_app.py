@@ -26,12 +26,12 @@ def connect_db_customers():
     return conn_customer, db_was_just_created_customer
 
 
-def initialize_data(conn_customer):
+def initialize_customer_data(conn_customer):
     '''Initializes the customer table with some data.'''
     st.success("Initializing the customer table with some data")
     cursor = conn_customer.cursor()
 
-    st.success("Creating table")
+    st.success("Creating Customer table")
     cursor.execute(
         '''
         CREATE TABLE IF NOT EXISTS customers_list(
@@ -43,7 +43,7 @@ def initialize_data(conn_customer):
         '''
     )
 
-    st.success("Inserting data into table")
+    st.success("Inserting customer data into table")
     cursor.execute(
         '''
         INSERT INTO customers_list
@@ -53,10 +53,10 @@ def initialize_data(conn_customer):
         '''
     )
     conn_customer.commit()
-    st.success("Table loaded")
+    st.success("Customer table loaded")
 
 
-def load_data(conn_customer):
+def load_customer_data(conn_customer):
     '''Loads the customers_list data from the database.'''
     cursor = conn_customer.cursor()
 
@@ -78,12 +78,12 @@ def load_data(conn_customer):
 
     return df_customer
 
-def update_data(conn_customer, df_customer, changes):
+def update_customer_data(conn_customer, df_customer, changes):
     '''Updates the customer data in the database.'''
     cursor = conn_customer.cursor()
 
     if changes['edited_rows']:
-        deltas = st.session_state.customers_table['edited_rows']
+        deltas = st.session_state.customers_list['edited_rows']
         rows = []
 
         for i, delta in deltas.items():
@@ -142,13 +142,13 @@ customers_list, db_was_just_created_customer = connect_db_customers()
 
 # Initialize data.
 if db_was_just_created_customer:
-    initialize_data(customers_list)
+    initialize_data(conn_customer)
     st.toast('Database initialized with some sample data.')
 
 # Load data from database
-df_customer = load_data(customers_list)
+df_customer = load_data(conn_customer)
 
-has_uncommitted_changes = any(len(v) for v in st.session_state.customers_table.values())
+has_uncommitted_changes = any(len(v) for v in st.session_state.customers_list.values())
 
 st.button(
     'Commit changes',
@@ -156,7 +156,7 @@ st.button(
     disabled=not has_uncommitted_changes,
     # Update data in database
     on_click=update_data,
-    args=(customers_list, df_customer, st.session_state.customers_table))
+    args=(customers_list, df_customer, st.session_state.customers_list))
 
 st.write(df_customer)
 
