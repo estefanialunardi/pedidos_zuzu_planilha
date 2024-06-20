@@ -14,6 +14,153 @@ st.set_page_config(
 
 # -----------------------------------------------------------------------------
 # Declare some useful functions.
+def connect_db_customers():
+    '''Connects to the sqlite database.'''
+
+    DB_FILENAME = Path(__file__).parent/'customers_list.'
+    db_already_exists = DB_FILENAME.exists()
+
+    conn_customer = sqlite3.connect(DB_FILENAME)
+    db_was_just_created_customer = not db_already_exists
+
+    return conn_customer, db_was_just_created_customer
+
+
+def initialize_data(conn_customer):
+    '''Initializes the customer table with some data.'''
+    st.success("Initializing the customer table with some data")
+    cursor = conn_customer.cursor()
+
+    st.success("Creating table")
+    cursor.execute(
+        '''
+        CREATE TABLE IF NOT EXISTS customers_list(
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            customer_name TEXT,
+            customer_phone TEXT,
+            customer_address TEXT,
+            customer_birthday TEXT)
+        '''
+    )
+
+    st.success("Inserting data into table")
+    cursor.execute(
+        '''
+        INSERT INTO customers_list
+            (customer_name, customer_phone, customer_address, customer_birthday)
+        VALUES
+            ('Estefânia Mesquita', '11934111604', 'Rua Rio Doce, 124, São Lucas', '16/04')
+        '''
+    )
+    conn_customer.commit()
+    st.success("Table loaded")
+
+
+def load_data(conn_customer):
+    '''Loads the customers_list data from the database.'''
+    cursor = conn_customer.cursor()
+
+    try:
+        cursor.execute('SELECT * FROM customers_list')
+        data = cursor.fetchall()
+        st.success("Customers in DB!")
+    except:
+        return st.write("Error in Customers DB!")
+
+    df = pd.DataFrame(data,
+        columns=[
+            'id',
+            'customer_name',
+            'customer_phone',
+            'customer_address',
+            'customer_birthday'
+        ])
+
+    return df_customer
+
+def update_data(conn_customer, df_customer, changes):
+    '''Updates the customer data in the database.'''
+    cursor = conn_customer.cursor()
+
+    if changes['edited_rows']:
+        deltas = st.session_state.customers_table['edited_rows']
+        rows = []
+
+        for i, delta in deltas.items():
+            row_dict = df_customer.iloc[i].to_dict()
+            row_dict.update(delta)
+            rows.append(row_dict)
+
+        cursor.executemany(
+            '''
+            UPDATE customers_list
+            SET
+                customer_name = :customer_name,
+                customer_phone = :customer_phone,
+                customer_address = :customer_address,
+                customer_birthday = :customer_birthday,
+            WHERE id = :id
+            ''',
+            rows,
+        )
+
+    if changes['added_rows']:
+        cursor.executemany(
+            '''
+            INSERT INTO customers_list
+                (id, customer_name, customer_phone, customer_address, customer_birthday)
+            VALUES
+                (:id, :customer_name, :customer_phone, :customer_address, :customer_birthday)
+            ''',
+            (defaultdict(lambda: None, row) for row in changes['added_rows']),
+        )
+
+    if changes['deleted_rows']:
+        cursor.executemany(
+            'DELETE FROM customers_list WHERE id = :id',
+            ({'id': int(df_customer.loc[i, 'id'])} for i in changes['deleted_rows'])
+        )
+
+    conn_customer.commit()
+
+
+# -----------------------------------------------------------------------------
+# Draw the actual page, starting with the customer table.
+
+# Set the title that appears at the top of the page.
+'''
+# :shopping_bags: Pedidos Zuzunely
+
+**Inventário e controle de pedidos**'''
+
+st.info('''
+    Tabela de controle do estoque, para adicionar, remover ou editar os itens.
+    ''')
+
+# Connect to database and create table if needed
+customers_list, db_was_just_created_customer = connect_db_customers()
+
+# Initialize data.
+if db_was_just_created_customer:
+    initialize_data(customers_list)
+    st.toast('Database initialized with some sample data.')
+
+# Load data from database
+df_customer = load_data(customers_list)
+
+has_uncommitted_changes = any(len(v) for v in st.session_state.customers_table.values())
+
+st.button(
+    'Commit changes',
+    type='primary',
+    disabled=not has_uncommitted_changes,
+    # Update data in database
+    on_click=update_data,
+    args=(customers_list, df_customer, st.session_state.customers_table))
+
+st.write(df_customer)
+
+
 
 def connect_db():
     '''Connects to the sqlite database.'''
