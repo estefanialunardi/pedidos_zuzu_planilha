@@ -148,7 +148,7 @@ if db_was_just_created_customer:
 # Load data from database
 df_customer = load_customer_data(conn_customer)
 
-has_uncommitted_changes = any(len(v) for v in st.session_state.conn_customer.values())
+has_uncommitted_changes = any(len(v) for v in st.session_state.customers_list.values())
 
 st.button(
     'Commit changes',
