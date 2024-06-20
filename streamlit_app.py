@@ -138,7 +138,7 @@ st.info('''
     ''')
 
 # Connect to database and create table if needed
-customers_list, db_was_just_created_customer = connect_db_customers()
+conn_customer, db_was_just_created_customer = connect_db_customers()
 
 # Initialize data.
 if db_was_just_created_customer:
@@ -148,7 +148,7 @@ if db_was_just_created_customer:
 # Load data from database
 df_customer = load_customer_data(conn_customer)
 
-has_uncommitted_changes = any(len(v) for v in st.session_state.customers_list.values())
+has_uncommitted_changes = any(len(v) for v in st.session_state.conn_customer.values())
 
 st.button(
     'Commit changes',
