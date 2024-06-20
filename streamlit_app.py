@@ -67,7 +67,7 @@ def load_data(conn_customer):
     except:
         return st.write("Error in Customers DB!")
 
-    df = pd.DataFrame(data,
+    df_customer = pd.DataFrame(data,
         columns=[
             'id',
             'customer_name',
