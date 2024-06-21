@@ -156,7 +156,7 @@ st.button(
     disabled=not has_uncommitted_changes,
     # Update data in database
     on_click=update_data,
-    args=(customers_list, df_customer, st.session_state.customers_list))
+    args=(conn_customer, df_customer, st.session_state.customers_list))
 
 st.write(df_customer)
 
