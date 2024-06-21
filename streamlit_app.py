@@ -159,8 +159,6 @@ st.button(
     on_click=update_customer_data,
     args=(conn_customer, df_customer, st.session_state.customers_list))
 
-st.write(df_customer)
-
 def connect_db():
     '''Connects to the sqlite database.'''
 
@@ -415,5 +413,3 @@ st.subheader('Best sellers', divider='orange')
 #         y=alt.Y('item_name').sort('-x'),
 #     ),
 #     use_container_width=True)
-
-st.write(df)
