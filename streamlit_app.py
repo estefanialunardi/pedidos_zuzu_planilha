@@ -51,8 +51,6 @@ def initialize_customer_data(conn_customer):
 
 
 def load_customer_data(conn_customer):
-    st.success("Loads the customers_list data from DB!")
-    '''Loads the customers_list data from the database.'''
     cursor = conn_customer.cursor()
 
     try:
