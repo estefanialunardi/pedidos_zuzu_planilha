@@ -51,6 +51,7 @@ def initialize_customer_data(conn_customer):
 
 
 def load_customer_data(conn_customer):
+    st.success("Loads the customers_list data from DB!")
     '''Loads the customers_list data from the database.'''
     cursor = conn_customer.cursor()
 
@@ -128,7 +129,7 @@ def update_customer_data(conn_customer, df_customer, changes):
 **Inventário e controle de pedidos**'''
 
 st.info('''
-    Tabela de controle do estoque, para adicionar, remover ou editar os itens.
+    Tabela de Clientes
     ''')
 
 # Connect to database and create table if needed
@@ -271,7 +272,7 @@ def update_data(conn, df, changes):
 
         cursor.executemany(
             '''
-            UPDATE inventory
+            UPDATE order_inventory
             SET
                 item_name = :item_name,
                 price = :price,
@@ -286,7 +287,7 @@ def update_data(conn, df, changes):
     if changes['added_rows']:
         cursor.executemany(
             '''
-            INSERT INTO inventory
+            INSERT INTO order_inventory
                 (id, item_name, price, units_sold, units_left, cost_price)
             VALUES
                 (:id, :item_name, :price, :units_sold, :units_left, :cost_price)
@@ -296,7 +297,7 @@ def update_data(conn, df, changes):
 
     if changes['deleted_rows']:
         cursor.executemany(
-            'DELETE FROM inventory WHERE id = :id',
+            'DELETE FROM order_inventory WHERE id = :id',
             ({'id': int(df.loc[i, 'id'])} for i in changes['deleted_rows'])
         )
 
