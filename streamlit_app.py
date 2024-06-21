@@ -11,11 +11,11 @@ import pandas as pd
 def connect_db_customers():
     '''Connects to the sqlite database.'''
 
-    DB_FILENAME = Path(__file__).parent/'customers_list.'
-    db_already_exists = DB_FILENAME.exists()
+    DB_CUSTOMERS_FILENAME = Path(__file__).parent/'customers_list.'
+    db_customers_already_exists = DB_CUSTOMERS_FILENAME.exists()
 
-    conn_customer = sqlite3.connect(DB_FILENAME)
-    db_was_just_created_customer = not db_already_exists
+    conn_customer = sqlite3.connect(DB_CUSTOMERS_FILENAME)
+    db_was_just_created_customer = not db_customers_already_exists
 
     return conn_customer, db_was_just_created_customer
 
