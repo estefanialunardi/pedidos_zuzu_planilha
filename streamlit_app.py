@@ -148,14 +148,11 @@ if db_was_just_created_customer:
 # Load data from database
 df_customer = load_customer_data(conn_customer)
 
-has_uncommitted_changes = any(len(v) for v in st.session_state.inventory_table.values())
-
 st.button(
     'Commit changes',
     type='primary',
-    disabled=not has_uncommitted_changes,
     # Update data in database
-    on_click=update_data,
+    on_click=update_customer_data,
     args=(conn_customer, df_customer, st.session_state.customers_list))
 
 st.write(df_customer)
