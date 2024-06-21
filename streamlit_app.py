@@ -154,7 +154,7 @@ edited_df_customer = st.data_editor(
     key='customers_list')
 
 st.button(
-    'Commit changes',
+    'Commit Customer changes',
     type='primary',
     # Update data in database
     on_click=update_customer_data,
@@ -342,7 +342,7 @@ edited_df = st.data_editor(
 has_uncommitted_changes = any(len(v) for v in st.session_state.inventory_table.values())
 
 st.button(
-    'Commit changes',
+    'Commit Inventory changes',
     type='primary',
     disabled=not has_uncommitted_changes,
     # Update data in database
