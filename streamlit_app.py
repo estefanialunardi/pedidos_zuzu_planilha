@@ -6,12 +6,6 @@ import streamlit as st
 import altair as alt
 import pandas as pd
 
-st.set_page_config(
-    page_title='Pedidos Zuzu',
-    page_icon=':shopping_bags:', 
-)
-
-
 # -----------------------------------------------------------------------------
 # Declare some useful functions.
 def connect_db_customers():
@@ -147,6 +141,17 @@ if db_was_just_created_customer:
 
 # Load data from database
 df_customer = load_customer_data(conn_customer)
+
+edited_df_customer = st.data_editor(
+    df_customer,
+    disabled=['id'], # Don't allow editing the 'id' column.
+    num_rows='dynamic', # Allow appending/deleting rows.
+    # column_config={
+    #     # Show dollar sign before price columns.
+    #     "price": st.column_config.NumberColumn(format="R$%.2f"),
+    #     "cost_price": st.column_config.NumberColumn(format="R$%.2f"),
+    # },
+    key='customers_list')
 
 st.button(
     'Commit changes',
